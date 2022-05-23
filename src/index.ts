@@ -5,7 +5,7 @@ import {
   Adapter,
   AdapterSession,
   AdapterUser,
-  VerificationToken
+  VerificationToken,
 } from "next-auth/adapters";
 
 const fix = (obj: { [key: string]: any } | null) => {
@@ -66,28 +66,36 @@ const getBase = <T>(deta: Deta, baseName: string) => {
   return base;
 };
 
-interface DetaAdapterOption {
+interface DetaAdapterOptions {
   baseName?: {
     users?: string;
     accounts?: string;
     sessions?: string;
     verificationTokens?: string;
-  }
+  };
 }
-const detaAdapterOptionInit: RecursiveRequired<DetaAdapterOption> = {
+const detaAdapterOptionsInit: RecursiveRequired<DetaAdapterOptions> = {
   baseName: {
     users: "users",
     accounts: "accounts",
     sessions: "sessions",
     verificationTokens: "verificationTokens",
   },
-}
+};
 
-export const DetaAdapter = (deta: Deta, option?: DetaAdapterOption): Adapter => {
-  const usersBaseName = option?.baseName?.users ?? detaAdapterOptionInit.baseName.users;
-  const accountsBaseName = option?.baseName?.accounts ?? detaAdapterOptionInit.baseName.accounts;
-  const sessionsBaseName = option?.baseName?.sessions ?? detaAdapterOptionInit.baseName.sessions;
-  const verificationTokensBaseName = option?.baseName?.verificationTokens ?? detaAdapterOptionInit.baseName.verificationTokens;
+export const DetaAdapter = (
+  deta: Deta,
+  options?: DetaAdapterOptions
+): Adapter => {
+  const usersBaseName =
+    options?.baseName?.users ?? detaAdapterOptionsInit.baseName.users;
+  const accountsBaseName =
+    options?.baseName?.accounts ?? detaAdapterOptionsInit.baseName.accounts;
+  const sessionsBaseName =
+    options?.baseName?.sessions ?? detaAdapterOptionsInit.baseName.sessions;
+  const verificationTokensBaseName =
+    options?.baseName?.verificationTokens ??
+    detaAdapterOptionsInit.baseName.verificationTokens;
 
   const users = getBase<AdapterUser>(deta, usersBaseName);
   const accounts = getBase<Account & { id: string }>(deta, accountsBaseName);
