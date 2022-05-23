@@ -66,13 +66,43 @@ const getBase = <T>(deta: Deta, baseName: string) => {
   return base;
 };
 
-export const DetaAdapter = (deta: Deta): Adapter => {
-  const users = getBase<AdapterUser>(deta, "users");
-  const accounts = getBase<Account & { id: string }>(deta, "accounts");
-  const sessions = getBase<AdapterSession>(deta, "sessions");
+interface DetaAdapterOptions {
+  baseName?: {
+    users?: string;
+    accounts?: string;
+    sessions?: string;
+    verificationTokens?: string;
+  };
+}
+const detaAdapterOptionsInit: RecursiveRequired<DetaAdapterOptions> = {
+  baseName: {
+    users: "users",
+    accounts: "accounts",
+    sessions: "sessions",
+    verificationTokens: "verificationTokens",
+  },
+};
+
+export const DetaAdapter = (
+  deta: Deta,
+  options?: DetaAdapterOptions
+): Adapter => {
+  const usersBaseName =
+    options?.baseName?.users ?? detaAdapterOptionsInit.baseName.users;
+  const accountsBaseName =
+    options?.baseName?.accounts ?? detaAdapterOptionsInit.baseName.accounts;
+  const sessionsBaseName =
+    options?.baseName?.sessions ?? detaAdapterOptionsInit.baseName.sessions;
+  const verificationTokensBaseName =
+    options?.baseName?.verificationTokens ??
+    detaAdapterOptionsInit.baseName.verificationTokens;
+
+  const users = getBase<AdapterUser>(deta, usersBaseName);
+  const accounts = getBase<Account & { id: string }>(deta, accountsBaseName);
+  const sessions = getBase<AdapterSession>(deta, sessionsBaseName);
   const verificationTokens = getBase<VerificationToken & { id: string }>(
     deta,
-    "verificationTokens"
+    verificationTokensBaseName
   );
 
   return {
